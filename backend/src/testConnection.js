@@ -1,6 +1,6 @@
 // testConnection.js
 import "dotenv/config";
-import { supabase } from "./lib/supabase.js";
+import { supabase } from "./config/supabase.js";
 
 const { data, error } = await supabase.auth.getSession();
 

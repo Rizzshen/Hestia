@@ -17,10 +17,4 @@ app.use(express.json())
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Hestia API running' })
-})
-
-app.listen(PORT, () => {
-  console.log(`Hestia server running on port ${PORT}`)
-})
+export default app
