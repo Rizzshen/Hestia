@@ -8,6 +8,5 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
   family: 4  // ← forces IPv4
 });
-console.log('DB URL:', process.env.DATABASE_URL);
 
 export default pool;
