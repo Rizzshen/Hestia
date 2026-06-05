@@ -7,8 +7,10 @@ import pool from "./config/db.js";
 
 // Raw Materials routes
 import rawMaterialsRouter from "./routes/rawMaterials.js";
-
+//products routes
 import productsRouter from "./routes/products.js";
+//ingredients routes
+import ingredientsRouter from "./routes/ingredients.js";
 
 dotenv.config();
 
@@ -24,8 +26,16 @@ app.use(
 app.use(express.json());
 
 // API routes
+//raw materials routes
+
 app.use("/api/raw-materials", rawMaterialsRouter);
+
+//products routes
 app.use("/api/products", productsRouter);
+
+//ingredients routes
+
+app.use("/api/products", ingredientsRouter);
 
 // Swagger documentation route
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
