@@ -8,7 +8,7 @@ export const getIngredient = async (req, res) => {
 export const addIngredient = async (req, res) => {
   const ingredient = await service.addIngredient(req.params.id, req.body);
   if (!ingredient)
-    return res.status(400).json({ error: "Raw Material not found" });
+    return res.status(404).json({ error: "Raw Material not found" });
   res.status(201).json(ingredient);
 };
 

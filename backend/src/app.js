@@ -15,7 +15,7 @@ import ingredientsRouter from "./routes/ingredients.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+
 
 app.use(
   cors({

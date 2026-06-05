@@ -63,6 +63,25 @@ const options = {
             stock_qty: { type: "number", example: 100 },
           },
         },
+        Ingredient: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            product_id: { type: "integer", example: 1 },
+            raw_material_id: { type: "integer", example: 3 },
+            raw_material_name: { type: "string", example: "Ashwagandha Root" },
+            unit: { type: "string", example: "kg" },
+            quantity_needed: { type: "number", example: 0.5 },
+          },
+        },
+        IngredientInput: {
+          type: "object",
+          required: ["raw_material_id", "quantity_needed"],
+          properties: {
+            raw_material_id: { type: "integer", example: 3 },
+            quantity_needed: { type: "number", example: 0.5 },
+          },
+        },
         Error: {
           type: "object",
           properties: {
