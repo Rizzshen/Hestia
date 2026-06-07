@@ -13,15 +13,17 @@ import productsRouter from "./routes/products.js";
 import ingredientsRouter from "./routes/ingredients.js";
 
 //clients routes
-import clientsRouter from './routes/clients.js';
+import clientsRouter from "./routes/clients.js";
 
 //orders routes
-import ordersRouter from './routes/orders.js';
+import ordersRouter from "./routes/orders.js";
+
+//orderItems routes
+import orderItemsRouter from "./routes/orderItems.js";
 
 dotenv.config();
 
 const app = express();
-
 
 app.use(
   cors({
@@ -48,6 +50,9 @@ app.use("/api/clients", clientsRouter);
 
 //orders routes
 app.use("/api/orders", ordersRouter);
+
+//order items routes
+app.use("/api/orders", orderItemsRouter);
 
 // Swagger documentation route
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
