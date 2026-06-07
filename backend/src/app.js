@@ -12,6 +12,9 @@ import productsRouter from "./routes/products.js";
 //ingredients routes
 import ingredientsRouter from "./routes/ingredients.js";
 
+//clients routes
+import clientsRouter from './routes/clients.js';
+
 dotenv.config();
 
 const app = express();
@@ -36,6 +39,9 @@ app.use("/api/products", productsRouter);
 //ingredients routes
 
 app.use("/api/products", ingredientsRouter);
+
+//clients routes
+app.use("/api/clients", clientsRouter);
 
 // Swagger documentation route
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
