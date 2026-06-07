@@ -1,6 +1,4 @@
 import * as controller from "../controllers/clientsController.js";
-import swagger from "../config/swagger.js";
-
 import { Router } from "express";
 
 const router = Router();

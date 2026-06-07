@@ -7,19 +7,20 @@ export const getAllclients = async (req, res) => {
 
 export const getClientById = async (req, res) => {
   const client = await services.getClientById(req.params.id);
-  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (!client) return res.status(404).json({ error: "Client not found" });
   res.status(200).json(client);
 };
 
 export const addClient = async (req, res) => {
-  const client = await services.addClient(req.body);
+  const client = await services.addClients(req.body);
   res.status(201).json(client);
 };
 
 export const updateClient = async (req, res) => {
-  const updateClient = await services.updateClient(req.params.id, req.body);
-  if (!updated) return res.status(404).json({ error: 'Client not found' });
-  res.json(updateClient);
+  const updatedClient = await services.updateClients(req.params.id, req.body);
+  if (!updatedClient)
+    return res.status(404).json({ error: "Client not found" });
+  res.json(updatedClient);
 };
 
 export const deleteClient = async (req, res) => {

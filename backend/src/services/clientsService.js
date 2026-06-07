@@ -13,7 +13,7 @@ export const addClients = async ({
   currency}
 ) => {
   const { rows } = await pool.query(
-    `INSERT INTO clients (company_name, contact_name, email, country, currency) Values ($1, $2, $3, $4) RETURNING *`,
+    `INSERT INTO clients (company_name, contact_name, email, country, currency) Values ($1, $2, $3, $4, $5) RETURNING *`,
     [company_name, contact_name, email, country, currency],
   );
   return rows[0];
