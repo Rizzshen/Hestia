@@ -82,6 +82,66 @@ const options = {
             quantity_needed: { type: "number", example: 0.5 },
           },
         },
+        Client: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            company_name: { type: "string", example: "Himalayan Herbs Co." },
+            contact_name: { type: "string", example: "Priya Sharma" },
+            email: { type: "string", example: "priya@himalayan.com" },
+            country: { type: "string", example: "India" },
+            currency: { type: "string", example: "USD" },
+          },
+        },
+        ClientInput: {
+          type: "object",
+          required: ["company_name", "contact_name", "email", "country"],
+          properties: {
+            company_name: { type: "string", example: "Himalayan Herbs Co." },
+            contact_name: { type: "string", example: "Priya Sharma" },
+            email: { type: "string", example: "priya@himalayan.com" },
+            country: { type: "string", example: "India" },
+            currency: { type: "string", example: "USD" },
+          },
+        },
+        Order: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            client_id: { type: "integer", example: 1 },
+            company_name: { type: "string", example: "Himalayan Herbs Co." },
+            status: { type: "string", example: "pending" },
+            notes: { type: "string", example: "Urgent delivery" },
+            created_at: { type: "string", example: "2026-01-01T00:00:00.000Z" },
+          },
+        },
+        OrderInput: {
+          type: "object",
+          required: ["client_id"],
+          properties: {
+            client_id: { type: "integer", example: 1 },
+            notes: { type: "string", example: "Urgent delivery" },
+          },
+        },
+        OrderItem: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            order_id: { type: "integer", example: 1 },
+            product_id: { type: "integer", example: 2 },
+            product_name: { type: "string", example: "Stress Relief Capsules" },
+            quantity: { type: "number", example: 10 },
+            unit_price_at_time: { type: "number", example: 25.0 },
+          },
+        },
+        OrderItemInput: {
+          type: "object",
+          required: ["product_id", "quantity"],
+          properties: {
+            product_id: { type: "integer", example: 2 },
+            quantity: { type: "number", example: 10 },
+          },
+        },
         Error: {
           type: "object",
           properties: {

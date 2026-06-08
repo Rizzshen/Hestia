@@ -15,13 +15,6 @@ export const createOrder = async ({ client_id, notes }) => {
   return rows[0];
 };
 
-export const updateOrderStatus = async (id, status) => {
-  const { rows } = await pool.query(
-    `UPDATE orders SET status = $1 WHERE id = $2 RETURNING *`,
-    [status, id],
-  );
-  return rows[0] ?? null;
-};
 export const getOrderById = async (id) => {
   const { rows } = await pool.query(
     `SELECT  orders.*,  clients.company_name FROM orders INNER JOIN clients ON clients.id = orders.client_id WHERE orders.id = $1`,
@@ -44,4 +37,38 @@ export const deleteOrder = async (id) => {
     [id],
   );
   return rows[0] ?? null;
+};
+
+export const updateOrderStatus = async (id, status) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+    if (status === "confirmed") {
+      
+      const { rows: items } = await client.query(
+        "SELECT * from order_items WHERE order_id = $1",
+        [id],
+      );
+      for (const item of items) {
+        const {rows: ingredients} = await client.query("SELECT * from product_ingredients WHERE product_id = $1", [item.product_id]);
+        for (const ingredient of ingredients) {
+          const deduction = ingredient.quantity_needed * item.quantity;
+          const deduct = await client.query("UPDATE raw_materials SET stock_qty = stock_qty- $1 WHERE id = $2", [deduction, ingredient.id])
+        }
+      }
+    }
+    const { rows } = await client.query(
+      "UPDATE orders SET status = $1 WHERE id = $2 RETURNING *",
+      [status, id],
+    );
+
+    await client.query("COMMIT");
+    return rows[0] ?? null;
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 };
