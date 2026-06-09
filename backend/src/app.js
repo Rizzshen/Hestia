@@ -21,6 +21,9 @@ import ordersRouter from "./routes/orders.js";
 //orderItems routes
 import orderItemsRouter from "./routes/orderItems.js";
 
+// dashbaord router
+import dashboardRouter from "./routes/dashboard.js";
+
 dotenv.config();
 
 const app = express();
@@ -53,6 +56,9 @@ app.use("/api/orders", ordersRouter);
 
 //order items routes
 app.use("/api/orders", orderItemsRouter);
+
+// Dashboard route
+app.use("/api/dashboard", dashboardRouter);
 
 // Swagger documentation route
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
