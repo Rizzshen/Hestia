@@ -24,6 +24,9 @@ import orderItemsRouter from "./routes/orderItems.js";
 // dashbaord router
 import dashboardRouter from "./routes/dashboard.js";
 
+//invoice Router
+import invoiceRouter from "./routes/invoice.js";
+
 dotenv.config();
 
 const app = express();
@@ -60,8 +63,14 @@ app.use("/api/orders", orderItemsRouter);
 // Dashboard route
 app.use("/api/dashboard", dashboardRouter);
 
+//invoice routes
+app.use("/api/invoice", invoiceRouter);
 // Swagger documentation route
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.get("/", (req, res) => {
+  res.redirect("/api/docs");
+});
 
 pool
   .query("SELECT NOW()")
