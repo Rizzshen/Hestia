@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 h-screen bg-sidebar flex flex-col ">
       {/* App name */}
-      <div className="px-6 py-5 flex items-center gap-2 bg-black/30">
+      <div className="px-6 h-16 flex items-center gap-2 border-b border-white/10">
         <span className="text-xl font-semibold text-white tracking-wide">
           HESTIA
         </span>
