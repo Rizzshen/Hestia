@@ -6,7 +6,7 @@ import {
   Users,
   ShoppingCart,
 } from "lucide-react";
-import logo from "../../assets/hestia.png";
+
 
 const links = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
