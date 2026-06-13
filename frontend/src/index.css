@@ -5,22 +5,23 @@
   --color-primary: #185fa5;
   --color-primary-hover: #0c447c;
   --color-primary-light: #e6f1fb;
-  --color-primary-foreground: #e6f1fb;
+  --color-primary-foreground: #ffffff;
+
 
   /* Backgrounds */
-  --color-background: #f1f5f9e7;
+  --color-background: #eef2f6;
   --color-surface: #ffffff;
   --color-border: #e2e8f0;
 
   /* Text — 3 levels */
   --color-text: #0f172a;
   --color-text-secondary: #475569;
-  --color-text-muted: #94a3b8;
+  --color-text-muted: #64748b;
 
   /* Sidebar */
   --color-sidebar: #0f172a;
   --color-sidebar-foreground: #cbd5e1;
-  --color-sidebar-active: #185fa5;
+  --color-sidebar-active: #1e293b;;
   --color-sidebar-hover: #1e293b;
 
   /* Status */
