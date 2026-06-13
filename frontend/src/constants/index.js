@@ -9,3 +9,11 @@ export const ORDER_STATUSES = [
 export const CURRENCIES = ['USD', 'EUR', 'NPR', 'INR']
 
 export const LOW_STOCK_COLOR = 'text-red-500'
+
+export const ORDER_STATUS_VARIANTS = {
+  pending: "warning",
+  confirmed: "info",
+  in_production: "info",
+  shipped: "neutral",
+  delivered: "success",
+};
