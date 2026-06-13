@@ -1,5 +1,5 @@
 import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
+import Topbar from "./TopBar";
 
 export default function PageWrapper({ children }) {
   return (
