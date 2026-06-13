@@ -20,7 +20,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        "px-4 py-1.75 rounded-[4px] text-[13px] font-medium tracking-[0.01em] transition-colors duration-100",
+        "px-4 py-1.75 rounded-sm text-[13px] font-medium tracking-[0.01em] transition-colors duration-100",
         variants[variant],
         className,
       )}
