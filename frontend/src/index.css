@@ -2,22 +2,25 @@
 
 @theme {
   /* Core */
-  --color-primary: #2563eb;
-  --color-primary-foreground: #ffffff;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #eff6ff;
+  --color-primary: #185fa5;
+  --color-primary-hover: #0c447c;
+  --color-primary-light: #e6f1fb;
+  --color-primary-foreground: #e6f1fb;
 
-  --color-background: #f8fafc;
+  /* Backgrounds */
+  --color-background: #f1f5f9e7;
   --color-surface: #ffffff;
   --color-border: #e2e8f0;
 
+  /* Text — 3 levels */
   --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
 
   /* Sidebar */
   --color-sidebar: #0f172a;
   --color-sidebar-foreground: #cbd5e1;
-  --color-sidebar-active: #2563eb;
+  --color-sidebar-active: #185fa5;
   --color-sidebar-hover: #1e293b;
 
   /* Status */
@@ -25,17 +28,17 @@
   --color-success-bg: #ecfdf5;
   --color-warning: #f59e0b;
   --color-warning-bg: #fffbeb;
-  --color-danger: #ef4444;
-  --color-danger-bg: #fef2f2;
-  --color-info: #2563eb;
-  --color-info-bg: #eff6ff;
+  --color-danger: #a32d2d;
+  --color-danger-bg: #fcebeb;
+  --color-danger-border: #f09595;
+  --color-info: #185fa5;
+  --color-info-bg: #e6f1fb;
 
-  /* Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
+  /* Radius — sharp, operational */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
 
-  /* Font */
-  --font-sans: "Inter", sans-serif;
+  --font-sans: 'Inter', sans-serif;
 }
