@@ -11,9 +11,11 @@ export default function Dashboard() {
     queryKey: ["dashboard"],
     queryFn: getDashboardMetrics,
   });
+  console.log("dashboard data:", data);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading dashboard</p>;
+  if (!data) return <p>No data</p>;
 
   return (
     <PageWrapper title="Dashboard">
