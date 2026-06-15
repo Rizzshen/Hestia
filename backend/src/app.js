@@ -33,6 +33,7 @@ const app = express();
 
 const allowedOrigins = [
   "https://hestia-eosin.vercel.app",
+  "http://localhost:5173",
   "https://hestia-8rtcaiel7-rizzshens-projects.vercel.app",
   process.env.CLIENT_URL,
 ].filter(Boolean); // removes undefined if CLIENT_URL isn't set
