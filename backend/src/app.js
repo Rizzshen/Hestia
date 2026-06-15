@@ -31,9 +31,11 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = ["https://hestia-8rtcaiel7-rizzshens-projects.vercel.app/", process.env.CLIENT_URL].filter(
-  Boolean,
-); // removes undefined if CLIENT_URL isn't set
+const allowedOrigins = [
+  "https://hestia-eosin.vercel.app",
+  "https://hestia-8rtcaiel7-rizzshens-projects.vercel.app",
+  process.env.CLIENT_URL,
+].filter(Boolean); // removes undefined if CLIENT_URL isn't set
 
 app.use(
   cors({
