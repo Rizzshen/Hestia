@@ -7,7 +7,6 @@
   --color-primary-light: #e6f1fb;
   --color-primary-foreground: #ffffff;
 
-
   /* Backgrounds */
   --color-background: #eef2f6;
   --color-surface: #ffffff;
@@ -21,8 +20,8 @@
   /* Sidebar */
   --color-sidebar: #0f172a;
   --color-sidebar-foreground: #cbd5e1;
-  --color-sidebar-active: #1e293b;;
-  --color-sidebar-hover: #1e293b;
+  --color-sidebar-active: #1e293b;
+  --color-sidebar-hover: #172033;
 
   /* Status */
   --color-success: #16a34a;
@@ -41,5 +40,5 @@
   --radius-lg: 10px;
   --radius-xl: 14px;
 
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: "Inter", sans-serif;
 }
