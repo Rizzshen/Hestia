@@ -1,11 +1,12 @@
 import PageWrapper from "../../components/layout/PageWrapper";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as rawMaterial from "../../api/rawmaterials";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import RawMaterialForm from "../../components/forms/RawMaterialForm";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
+import Skeleton from "../../components/ui/Skeleton";
+import ScreenState from "../../components/ui/ScreenState";
 import {
   Table,
   TableHeader,
@@ -17,23 +18,25 @@ import {
   TableStatusBadge,
 } from "../../components/ui/Table";
 
-import Skeleton from "../../components/ui/Skeleton";
-import ScreenState from "../../components/ui/ScreenState";
-
 function RawMaterialsSkeleton() {
   return (
     <div className="rounded-xl border border-border overflow-hidden">
-      <div className="bg-background px-5 py-3">
-        <Skeleton className="h-3 w-20" />
+      <div className="grid grid-cols-5 bg-background px-5 py-3 gap-4">
+        {["w-12", "w-8", "w-20", "w-28", "w-12"].map((w, i) => (
+          <Skeleton key={i} className={`h-2.5 ${w}`} />
+        ))}
       </div>
       <div className="divide-y bg-primary-foreground divide-border">
-        {[...Array(5)].map((_, i) => (
+        {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="flex justify-between items-center px-5 py-3.5"
+            className="grid grid-cols-5 items-center px-5 py-3.5 gap-4"
           >
             <Skeleton className="h-3 w-32" />
-            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-5 w-12 rounded-full" />
+            <Skeleton className="h-3 w-10 ml-auto" />
+            <Skeleton className="h-3 w-10 ml-auto" />
+            <Skeleton className="h-5 w-16 rounded-full" />
           </div>
         ))}
       </div>
@@ -44,6 +47,12 @@ function RawMaterialsSkeleton() {
 export default function RawMaterials() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["rawMaterials"],
+    queryFn: rawMaterial.getRawMaterials,
+  });
+
   const createMutation = useMutation({
     mutationFn: rawMaterial.createRawMaterial,
     onSuccess: () => {
@@ -51,16 +60,14 @@ export default function RawMaterials() {
       setIsModalOpen(false);
     },
   });
-  const handleCreate = (formData) => {
-    createMutation.mutate(formData);
-  };
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["rawMaterials"],
-    queryFn: rawMaterial.getRawMaterials,
-  });
 
   return (
-    <PageWrapper title="Raw Materials">
+    <PageWrapper>
+      {/* Action bar — button only, title comes from Topbar */}
+      <div className="flex justify-end mb-6">
+        <Button onClick={() => setIsModalOpen(true)}>+ Add Raw Material</Button>
+      </div>
+
       {isLoading ? (
         <RawMaterialsSkeleton />
       ) : error ? (
@@ -106,7 +113,6 @@ export default function RawMaterials() {
           </TableBody>
         </Table>
       )}
-      <Button onClick={() => setIsModalOpen(true)}>+ Add Raw Material</Button>
 
       <Modal
         isOpen={isModalOpen}
@@ -114,8 +120,10 @@ export default function RawMaterials() {
         title="Add Raw Material"
       >
         <RawMaterialForm
-          onSubmit={handleCreate}
+          onSubmit={(formData) => createMutation.mutate(formData)}
           isSubmitting={createMutation.isPending}
+          onCancel={() => setIsModalOpen(false)}
+          error={createMutation.error}
         />
       </Modal>
     </PageWrapper>

@@ -6,7 +6,9 @@ import Button from "../ui/Button";
 export default function RawMaterialForm({
   defaultValues,
   onSubmit,
+  onCancel,
   isSubmitting,
+  error,
 }) {
   const {
     register,
@@ -46,39 +48,55 @@ export default function RawMaterialForm({
         )}
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-text mb-1">
-          Stock Quantity
-        </label>
-        <input
-          type="number"
-          {...register("stock_qty")}
-          className="w-full border border-border rounded-md px-3 py-2 text-sm"
-        />
-        {errors.stock_qty && (
-          <p className="text-xs text-danger mt-1">{errors.stock_qty.message}</p>
-        )}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-text-secondary mb-1">
+            Stock Quantity
+          </label>
+          <input
+            type="number"
+            {...register("stock_qty")}
+            className="w-full border border-border rounded-md px-3 py-2 text-sm bg-surface-secondary"
+          />
+          {errors.stock_qty && (
+            <p className="text-xs text-danger mt-1">
+              {errors.stock_qty.message}
+            </p>
+          )}
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-text-secondary mb-1">
+            Low Stock Threshold
+          </label>
+          <input
+            type="number"
+            {...register("low_stock_threshold")}
+            className="w-full border border-border rounded-md px-3 py-2 text-sm bg-surface-secondary"
+          />
+          {errors.low_stock_threshold && (
+            <p className="text-xs text-danger mt-1">
+              {errors.low_stock_threshold.message}
+            </p>
+          )}
+        </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-text mb-1">
-          Low Stock Threshold
-        </label>
-        <input
-          type="number"
-          {...register("low_stock_threshold")}
-          className="w-full border border-border rounded-md px-3 py-2 text-sm"
-        />
-        {errors.low_stock_threshold && (
-          <p className="text-xs text-danger mt-1">
-            {errors.low_stock_threshold.message}
+      <div className="flex justify-end gap-2 pt-4 border-t border-border">
+        {error && (
+          <p className="text-xs text-danger mr-auto self-center">
+            Failed to add material. Please try again.
           </p>
         )}
-      </div>
-
-      <div className="flex justify-end gap-2 pt-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={isSubmitting}
+          className="px-4 py-2 text-sm font-medium text-text-secondary rounded-md hover:bg-surface-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Cancel
+        </button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save"}
+          {isSubmitting ? "Adding..." : "Add material"}
         </Button>
       </div>
     </form>
