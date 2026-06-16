@@ -5,7 +5,7 @@ const variants = {
   warning: "bg-warning-bg text-warning",
   danger: "bg-danger-bg text-danger",
   info: "bg-info-bg text-info",
-  neutral: "bg-background-secondary text-text-secondary",
+  neutral: "bg-surface-secondary text-text-secondary",
 };
 
 export default function Badge({ variant = "neutral", children, className }) {

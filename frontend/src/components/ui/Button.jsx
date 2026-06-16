@@ -4,7 +4,7 @@ const variants = {
   primary:
     "bg-primary text-primary-foreground border border-primary-hover hover:bg-primary-hover",
   secondary:
-    "bg-background-surface text-text border border-border hover:brightness-80 font-normal",
+    "bg-surface text-text border border-border hover:brightness-95 font-normal",
   danger:
     "bg-danger-bg text-danger border border-danger-border hover:bg-red-100 font-medium",
   ghost:

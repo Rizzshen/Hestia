@@ -53,7 +53,7 @@ app.use(
     credentials: true,
   }),
 );
-
+app.use(express.json());
 // API routes
 //raw materials routes
 

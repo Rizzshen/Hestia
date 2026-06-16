@@ -1,6 +1,11 @@
 import PageWrapper from "../../components/layout/PageWrapper";
 import { useQuery } from "@tanstack/react-query";
 import * as rawMaterial from "../../api/rawmaterials";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import RawMaterialForm from "../../components/forms/RawMaterialForm";
+import Button from "../../components/ui/Button";
+import Modal from "../../components/ui/Modal";
 import {
   Table,
   TableHeader,
@@ -21,7 +26,7 @@ function RawMaterialsSkeleton() {
       <div className="bg-background px-5 py-3">
         <Skeleton className="h-3 w-20" />
       </div>
-      <div className="divide-y divide-border">
+      <div className="divide-y bg-primary-foreground divide-border">
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
@@ -37,6 +42,18 @@ function RawMaterialsSkeleton() {
 }
 
 export default function RawMaterials() {
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const createMutation = useMutation({
+    mutationFn: rawMaterial.createRawMaterial,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
+      setIsModalOpen(false);
+    },
+  });
+  const handleCreate = (formData) => {
+    createMutation.mutate(formData);
+  };
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["rawMaterials"],
     queryFn: rawMaterial.getRawMaterials,
@@ -89,6 +106,18 @@ export default function RawMaterials() {
           </TableBody>
         </Table>
       )}
+      <Button onClick={() => setIsModalOpen(true)}>+ Add Raw Material</Button>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Add Raw Material"
+      >
+        <RawMaterialForm
+          onSubmit={handleCreate}
+          isSubmitting={createMutation.isPending}
+        />
+      </Modal>
     </PageWrapper>
   );
 }
