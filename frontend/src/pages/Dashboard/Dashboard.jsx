@@ -6,19 +6,66 @@ import Badge from "../../components/ui/Badge";
 import { ORDER_STATUS_VARIANTS } from "../../constants";
 import PageWrapper from "../../components/layout/PageWrapper";
 
+import Skeleton from "../../components/ui/Skeleton";
+import ScreenState from "../../components/ui/ScreenState";
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Stat cards */}
+      <div className="grid grid-cols-3 gap-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="rounded-xl border border-border p-4 space-y-3">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-7 w-16" />
+          </div>
+        ))}
+      </div>
+ 
+      {/* Recent orders */}
+      <Card>
+        <Skeleton className="h-3 w-28 mb-5" />
+        <div className="space-y-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex justify-between items-center">
+              <Skeleton className="h-3 w-36" />
+              <Skeleton className="h-5 w-20 rounded-full" />
+            </div>
+          ))}
+        </div>
+      </Card>
+ 
+      {/* Low stock */}
+      <Card>
+        <Skeleton className="h-3 w-28 mb-5" />
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex justify-between items-center">
+              <Skeleton className="h-3 w-32" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
 export default function Dashboard() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["dashboard"],
     queryFn: getDashboardMetrics,
   });
-  console.log("dashboard data:", data);
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading dashboard</p>;
-  if (!data) return <p>No data</p>;
 
   return (
     <PageWrapper title="Dashboard">
+      {isLoading ? (
+        <DashboardSkeleton />
+      ) : error ? (
+        <ScreenState type="error" onRetry={refetch} />
+      ) : !data ? (
+        <ScreenState type="empty" title="No dashboard data" />
+      ) : (
+        
       <div className="space-y-6">
         <div className="grid grid-cols-3 gap-4">
           <StatCard label="Total Clients" value={data.total_clients} />
@@ -60,7 +107,7 @@ export default function Dashboard() {
           ) : (
             data.low_stock_materials.map((material) => (
               <div
-                key={material.name}
+                key={material.id}
                 className="flex justify-between items-center text-sm"
               >
                 <span className="text-text">{material.name}</span>
@@ -73,6 +120,7 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+      )}
     </PageWrapper>
   );
 }

@@ -40,5 +40,7 @@
   --radius-lg: 10px;
   --radius-xl: 14px;
 
+  --color-surface-secondary: #f1f5f9;
+  --color-surface-muted: #e2e8f0;
   --font-sans: "Inter", sans-serif;
 }
