@@ -20,6 +20,8 @@ import {
 } from "../../components/ui/Table";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import { Pencil, Trash2 } from "lucide-react";
+import Pagination from "../../components/ui/Pagination";
+import { usePagination } from "../../hooks/usePagination";
 
 function RawMaterialsSkeleton() {
   return (
@@ -60,6 +62,10 @@ export default function RawMaterials() {
   const { sortedData, sortKey, direction, toggleSort } = useSortableData(
     data || [],
     null,
+  );
+  const { paginatedData, page, totalPages, goToPage } = usePagination(
+    sortedData,
+    10,
   );
 
   const createMutation = useMutation({
@@ -112,7 +118,17 @@ export default function RawMaterials() {
           description="Add your first raw material to get started."
         />
       ) : (
-        <Table>
+        <Table
+          footer={
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              goToPage={goToPage}
+              totalItems={sortedData.length}
+              pageSize={10}
+            />
+          }
+        >
           <TableHeader>
             <TableRow>
               <TableHead
@@ -154,7 +170,7 @@ export default function RawMaterials() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedData.map((material) => (
+            {paginatedData.map((material) => (
               <TableRow key={material.id}>
                 <TableCell className="font-medium capitalize">
                   {material.name}

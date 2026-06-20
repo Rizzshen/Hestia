@@ -1,7 +1,7 @@
 import { cn } from "../../lib/utils";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
-export function Table({ children, className }) {
+export function Table({ children, footer, className }) {
   return (
     <div
       className={cn(
@@ -10,6 +10,7 @@ export function Table({ children, className }) {
       )}
     >
       <table className="w-full border-collapse">{children}</table>
+      {footer}
     </div>
   );
 }
@@ -76,8 +77,6 @@ export function TableRow({ children, className }) {
     </tr>
   );
 }
-
-
 
 export function TableCell({ children, align = "left", className }) {
   return (
