@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { rawMaterialSchema } from "../../schemas/rawMaterial";
 import Button from "../ui/Button";
+import { UNITS } from "../../constants";
 
 export default function RawMaterialForm({
   defaultValues,
@@ -39,10 +40,17 @@ export default function RawMaterialForm({
 
       <div>
         <label className="block text-sm font-medium text-text mb-1">Unit</label>
-        <input
+        <select
           {...register("unit")}
-          className="w-full border border-border rounded-md px-3 py-2 text-sm"
-        />
+          className="w-full border border-border rounded-md px-3 py-2 text-sm bg-surface"
+        >
+          <option value="">Select a unit</option>
+          {UNITS.map((u) => (
+            <option key={u} value={u}>
+              {u}
+            </option>
+          ))}
+        </select>
         {errors.unit && (
           <p className="text-xs text-danger mt-1">{errors.unit.message}</p>
         )}

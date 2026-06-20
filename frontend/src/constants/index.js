@@ -1,14 +1,14 @@
 export const ORDER_STATUSES = [
-  'pending',
-  'confirmed',
-  'in_production',
-  'shipped',
-  'delivered',
-]
+  "pending",
+  "confirmed",
+  "in_production",
+  "shipped",
+  "delivered",
+];
 
-export const CURRENCIES = ['USD', 'EUR', 'NPR', 'INR']
+export const CURRENCIES = ["USD", "EUR", "NPR", "INR"];
 
-export const LOW_STOCK_COLOR = 'text-red-500'
+export const LOW_STOCK_COLOR = "text-red-500";
 
 export const ORDER_STATUS_VARIANTS = {
   pending: "warning",
@@ -17,3 +17,5 @@ export const ORDER_STATUS_VARIANTS = {
   shipped: "neutral",
   delivered: "success",
 };
+
+export const UNITS = ["kg", "g", "lb", "oz", "l", "ml", "pcs"];
