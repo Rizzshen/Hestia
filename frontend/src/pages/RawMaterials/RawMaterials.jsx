@@ -7,6 +7,7 @@ import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import Skeleton from "../../components/ui/Skeleton";
 import ScreenState from "../../components/ui/ScreenState";
+import { useSortableData } from "../../hooks/useSortableData";
 import {
   Table,
   TableHeader,
@@ -17,26 +18,29 @@ import {
   TableUnitBadge,
   TableStatusBadge,
 } from "../../components/ui/Table";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import { Pencil, Trash2 } from "lucide-react";
 
 function RawMaterialsSkeleton() {
   return (
     <div className="rounded-xl border border-border overflow-hidden">
-      <div className="grid grid-cols-5 bg-background px-5 py-3 gap-4">
-        {["w-12", "w-8", "w-20", "w-28", "w-12"].map((w, i) => (
+      <div className="grid grid-cols-6 bg-background px-5 py-2.5 gap-4">
+        {["w-12", "w-8", "w-20", "w-28", "w-12", "w-8"].map((w, i) => (
           <Skeleton key={i} className={`h-2.5 ${w}`} />
         ))}
       </div>
-      <div className="divide-y bg-primary-foreground divide-border">
+      <div className="divide-y bg-surface divide-border">
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="grid grid-cols-5 items-center px-5 py-3.5 gap-4"
+            className="grid grid-cols-6 items-center px-5 py-2.5 gap-4"
           >
             <Skeleton className="h-3 w-32" />
-            <Skeleton className="h-5 w-12 rounded-full" />
+            <Skeleton className="h-5 w-12 rounded" />
             <Skeleton className="h-3 w-10 ml-auto" />
             <Skeleton className="h-3 w-10 ml-auto" />
-            <Skeleton className="h-5 w-16 rounded-full" />
+            <Skeleton className="h-5 w-16 rounded" />
+            <Skeleton className="h-4 w-10 ml-auto" />
           </div>
         ))}
       </div>
@@ -47,11 +51,16 @@ function RawMaterialsSkeleton() {
 export default function RawMaterials() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [editingMaterial, setEditingMaterial] = useState(null);
+  const [materialToDelete, setMaterialToDelete] = useState(null);
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["rawMaterials"],
     queryFn: rawMaterial.getRawMaterials,
   });
+  const { sortedData, sortKey, direction, toggleSort } = useSortableData(
+    data || [],
+    null,
+  );
 
   const createMutation = useMutation({
     mutationFn: rawMaterial.createRawMaterial,
@@ -61,10 +70,34 @@ export default function RawMaterials() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => rawMaterial.updateRawMaterial(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
+      setIsModalOpen(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: rawMaterial.deleteRawMaterial,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
+    },
+  });
+
+  const handleDelete = (material) => {
+    setMaterialToDelete(material);
+  };
+
+  const confirmDelete = () => {
+    deleteMutation.mutate(materialToDelete.id, {
+      onSuccess: () => setMaterialToDelete(null),
+    });
+  };
+
   return (
     <PageWrapper>
-      {/* Action bar — button only, title comes from Topbar */}
-      <div className="flex justify-end mb-6">
+      <div className="flex justify-end mb-4">
         <Button onClick={() => setIsModalOpen(true)}>+ Add Raw Material</Button>
       </div>
 
@@ -82,17 +115,48 @@ export default function RawMaterials() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Unit</TableHead>
-              <TableHead align="right">Stock Qty</TableHead>
-              <TableHead align="right">Low Stock Threshold</TableHead>
+              <TableHead
+                sortKey="name"
+                currentSort={sortKey}
+                direction={direction}
+                onSort={toggleSort}
+              >
+                Name
+              </TableHead>
+              <TableHead
+                sortKey="unit"
+                currentSort={sortKey}
+                direction={direction}
+                onSort={toggleSort}
+              >
+                Unit
+              </TableHead>
+              <TableHead
+                sortKey="stock_qty"
+                currentSort={sortKey}
+                direction={direction}
+                onSort={toggleSort}
+                align="right"
+              >
+                Stock Qty
+              </TableHead>
+              <TableHead
+                sortKey="low_stock_threshold"
+                currentSort={sortKey}
+                direction={direction}
+                onSort={toggleSort}
+                align="right"
+              >
+                Low Stock Threshold
+              </TableHead>
               <TableHead>Status</TableHead>
+              <TableHead align="right" className="w-px"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((material) => (
+            {sortedData.map((material) => (
               <TableRow key={material.id}>
-                <TableCell className="font-medium text-text">
+                <TableCell className="font-medium capitalize">
                   {material.name}
                 </TableCell>
                 <TableCell>
@@ -108,6 +172,24 @@ export default function RawMaterials() {
                     threshold={material.low_stock_threshold}
                   />
                 </TableCell>
+                <TableCell align="right">
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      onClick={() => setEditingMaterial(material)}
+                      className="p-1 text-text-muted hover:text-primary transition-colors"
+                      title="Edit"
+                    >
+                      <Pencil size={15} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(material)}
+                      className="p-1 text-text-muted hover:text-danger transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -115,17 +197,39 @@ export default function RawMaterials() {
       )}
 
       <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Add Raw Material"
+        isOpen={isModalOpen || !!editingMaterial}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingMaterial(null);
+        }}
+        title={editingMaterial ? "Edit Raw Material" : "Add Raw Material"}
       >
         <RawMaterialForm
-          onSubmit={(formData) => createMutation.mutate(formData)}
-          isSubmitting={createMutation.isPending}
-          onCancel={() => setIsModalOpen(false)}
-          error={createMutation.error}
+          defaultValues={editingMaterial}
+          isEditing={!!editingMaterial}
+          onSubmit={(formData) => {
+            if (editingMaterial) {
+              updateMutation.mutate({ id: editingMaterial.id, data: formData });
+            } else {
+              createMutation.mutate(formData);
+            }
+          }}
+          isSubmitting={createMutation.isPending || updateMutation.isPending}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setEditingMaterial(null);
+          }}
+          error={createMutation.error || updateMutation.error}
         />
       </Modal>
+      <ConfirmDialog
+        isOpen={!!materialToDelete}
+        onClose={() => setMaterialToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete raw material"
+        description={`Are you sure you want to delete "${materialToDelete?.name}"? This cannot be undone.`}
+        isLoading={deleteMutation.isPending}
+      />
     </PageWrapper>
   );
 }

@@ -9,6 +9,7 @@ export default function RawMaterialForm({
   onSubmit,
   onCancel,
   isSubmitting,
+  isEditing,
   error,
 }) {
   const {
@@ -104,7 +105,11 @@ export default function RawMaterialForm({
           Cancel
         </button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Adding..." : "Add material"}
+          {isSubmitting
+            ? "Saving..."
+            : isEditing
+              ? "Save changes"
+              : "Add material"}
         </Button>
       </div>
     </form>

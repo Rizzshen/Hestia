@@ -1,4 +1,5 @@
 import { cn } from "../../lib/utils";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 export function Table({ children, className }) {
   return (
@@ -12,9 +13,51 @@ export function Table({ children, className }) {
     </div>
   );
 }
+export function TableHead({
+  children,
+  align = "left",
+  className,
+  sortKey,
+  currentSort,
+  direction,
+  onSort,
+}) {
+  const isSortable = !!sortKey && !!onSort;
+  const isActive = sortKey === currentSort;
+
+  return (
+    <th
+      className={cn(
+        "text-[11px] font-semibold text-text-muted uppercase tracking-[0.07em] px-5 py-2.5 bg-background",
+        align === "right" ? "text-right" : "text-left",
+        align === "center" ? "text-center" : "",
+        isSortable && "cursor-pointer select-none hover:text-text",
+        className,
+      )}
+      onClick={isSortable ? () => onSort(sortKey) : undefined}
+    >
+      <span
+        className={cn(
+          "inline-flex items-center gap-1",
+          align === "right" && "flex-row-reverse",
+        )}
+      >
+        {children}
+        {isSortable &&
+          (isActive && direction === "asc" ? (
+            <ChevronUp size={12} className="text-primary" />
+          ) : isActive && direction === "desc" ? (
+            <ChevronDown size={12} className="text-primary" />
+          ) : (
+            <ChevronDown size={12} className="opacity-30" />
+          ))}
+      </span>
+    </th>
+  );
+}
 
 export function TableHeader({ children }) {
-  return <thead className="border-b border-border">{children}</thead>;
+  return <thead className="border-b-2 border-border">{children}</thead>;
 }
 
 export function TableBody({ children }) {
@@ -34,28 +77,17 @@ export function TableRow({ children, className }) {
   );
 }
 
-export function TableHead({ children, align = "left", className }) {
-  return (
-    <th
-      className={cn(
-        "text-[11px] font-semibold text-text-muted uppercase tracking-[0.07em] px-5 py-3 bg-background",
-        align === "right" ? "text-right" : "text-left",
-        className,
-      )}
-    >
-      {children}
-    </th>
-  );
-}
+
 
 export function TableCell({ children, align = "left", className }) {
   return (
     <td
       className={cn(
-        "px-5 py-3.5 text-sm text-text",
+        "px-5 py-2.5 text-sm text-text",
         align === "right"
           ? "text-right tabular-nums text-text-secondary"
           : "text-left",
+        align === "center" ? "text-center" : "",
         className,
       )}
     >
@@ -73,6 +105,15 @@ export function TableUnitBadge({ children }) {
 }
 
 export function TableStatusBadge({ qty, threshold }) {
+  if (!threshold || threshold === 0) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[var(--radius-sm)] text-xs font-medium bg-info-bg text-info">
+        <span className="w-1.5 h-1.5 rounded-full bg-info inline-block shrink-0" />
+        No threshold
+      </span>
+    );
+  }
+
   const ratio = qty / threshold;
 
   if (ratio <= 0.5) {
