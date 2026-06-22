@@ -5,8 +5,9 @@ export function Table({ children, footer, className }) {
   return (
     <div
       className={cn(
-        "w-full overflow-hidden rounded-[var(--radius-lg)] border border-border bg-surface shadow-sm",
+        "w-full overflow-hidden rounded-lg border border-border bg-surface shadow-sm",
         className,
+        
       )}
     >
       <table className="w-full border-collapse">{children}</table>

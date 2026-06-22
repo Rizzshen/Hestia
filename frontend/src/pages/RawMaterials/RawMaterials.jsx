@@ -22,6 +22,8 @@ import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import { Pencil, Trash2 } from "lucide-react";
 import Pagination from "../../components/ui/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import Toast from "../../components/ui/Toast";
+import { useToast } from "../../hooks/useToast";
 
 function RawMaterialsSkeleton() {
   return (
@@ -55,6 +57,7 @@ export default function RawMaterials() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState(null);
   const [materialToDelete, setMaterialToDelete] = useState(null);
+  const { toasts, addToast, removeToast } = useToast();
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["rawMaterials"],
     queryFn: rawMaterial.getRawMaterials,
@@ -70,17 +73,19 @@ export default function RawMaterials() {
 
   const createMutation = useMutation({
     mutationFn: rawMaterial.createRawMaterial,
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
       setIsModalOpen(false);
+      addToast(`"${variables.name}" added successfully.`, "created");
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => rawMaterial.updateRawMaterial(id, data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
       setIsModalOpen(false);
+      addToast(`"${variables.data.name}" updated.`, "updated");
     },
   });
 
@@ -88,6 +93,7 @@ export default function RawMaterials() {
     mutationFn: rawMaterial.deleteRawMaterial,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rawMaterials"] });
+      addToast(`"${materialToDelete?.name}" deleted.`, "deleted");
     },
   });
 
@@ -219,6 +225,7 @@ export default function RawMaterials() {
           setEditingMaterial(null);
         }}
         title={editingMaterial ? "Edit Raw Material" : "Add Raw Material"}
+        dismissable={false}
       >
         <RawMaterialForm
           defaultValues={editingMaterial}
@@ -246,6 +253,7 @@ export default function RawMaterials() {
         description={`Are you sure you want to delete "${materialToDelete?.name}"? This cannot be undone.`}
         isLoading={deleteMutation.isPending}
       />
+      <Toast toasts={toasts} onRemove={removeToast} />
     </PageWrapper>
   );
 }

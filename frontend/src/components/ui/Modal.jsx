@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({ isOpen, onClose, title, children, dismissable = true }) {
   useEffect(() => {
     if (!isOpen) return;
 
@@ -22,7 +22,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
   return createPortal(
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
+      onClick={dismissable ? onClose : undefined}
     >
       <div
         className="bg-surface rounded-lg shadow-lg w-full max-w-md"
