@@ -217,7 +217,7 @@ export default function OrderDetail() {
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleteMutation.isPending}
           >
-            <Trash2 size={16} className="mr-2" /> Delete Order
+            <Trash2 size={16} className="mr-2" />
           </Button>
         </div>
       </div>
@@ -311,6 +311,7 @@ export default function OrderDetail() {
                 Client
               </h3>
               <p className="font-medium text-text">
+                {console.log(order)}
                 {order.contact_name || "Unknown Contact"}
                 {order.company_name && (
                   <span className="text-text-muted font-normal ml-1">
