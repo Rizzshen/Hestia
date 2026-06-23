@@ -6,7 +6,7 @@ export const ORDER_STATUSES = [
   "delivered",
 ];
 
-export const CURRENCIES = ["USD", "EUR", "NPR", "INR"];
+export const CURRENCIES = ["USD", "EUR", "NPR", "INR", "CNY"];
 
 export const LOW_STOCK_COLOR = "text-red-500";
 

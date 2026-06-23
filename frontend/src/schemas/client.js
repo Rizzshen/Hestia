@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { CURRENCIES } from "../constants/index";
 
-export const productSchema = z
+export const clientSchema = z
   .object({
     company_name: z.string().trim().optional(),
     contact_name: z.string().trim().optional(),

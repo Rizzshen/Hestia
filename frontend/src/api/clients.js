@@ -17,6 +17,6 @@ export const deleteClient = async (id) => {
   return res.data;
 };
 export const getClient = async (id) => {
-  const res = await api.get(`api/clients/${id}`);
+  const res = await api.get(`/api/clients/${id}`);
   return res.data;
 };
