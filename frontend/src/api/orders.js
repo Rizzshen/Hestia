@@ -24,3 +24,8 @@ export const deleteOrder = async (id) => {
   const res = await api.delete(`/api/orders/${id}`);
   return res.data;
 };
+
+export const generateOrderInvoice = async (orderId) => {
+  const res = await api.get(`/api/invoice/${orderId}`);
+  return res.data;
+};

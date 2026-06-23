@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 
 export const getAllOrders = async () => {
   const { rows } = await pool.query(
-    "SELECT   orders.*,  clients.company_name FROM orders INNER JOIN clients ON clients.id = orders.client_id",
+    "SELECT   orders.*,  clients.company_name, clients.contact_name FROM orders INNER JOIN clients ON clients.id = orders.client_id",
   );
   return rows;
 };
