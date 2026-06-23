@@ -1,7 +1,7 @@
 import PageWrapper from "../../components/layout/PageWrapper";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as rawMaterial from "../../api/rawmaterials";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import RawMaterialForm from "../../components/forms/RawMaterialForm";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
@@ -24,6 +24,8 @@ import Pagination from "../../components/ui/Pagination";
 import { usePagination } from "../../hooks/usePagination";
 import Toast from "../../components/ui/Toast";
 import { useToast } from "../../hooks/useToast";
+import { useDebounce } from "../../hooks/useDebounce";
+import SearchInput from "../../components/ui/SearchInput";
 
 function RawMaterialsSkeleton() {
   return (
@@ -57,13 +59,29 @@ export default function RawMaterials() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState(null);
   const [materialToDelete, setMaterialToDelete] = useState(null);
+
+  //Search State
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
   const { toasts, addToast, removeToast } = useToast();
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["rawMaterials"],
     queryFn: rawMaterial.getRawMaterials,
   });
+
+  const searchedData = useMemo(() => {
+    if (!data) return [];
+    if (!debouncedSearchTerm) return data;
+    const lowercasedTerm = debouncedSearchTerm.toLowerCase();
+    return data.filter(
+      (item) =>
+        item.name.toLowerCase().includes(lowercasedTerm) ||
+        item.unit.toLowerCase().includes(lowercasedTerm),
+    );
+  }, [data, debouncedSearchTerm]);
   const { sortedData, sortKey, direction, toggleSort } = useSortableData(
-    data || [],
+    searchedData,
     null,
   );
   const { paginatedData, page, totalPages, goToPage } = usePagination(
@@ -109,7 +127,12 @@ export default function RawMaterials() {
 
   return (
     <PageWrapper>
-      <div className="flex justify-end mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <SearchInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search materials..."
+        />
         <Button onClick={() => setIsModalOpen(true)}>+ Add Raw Material</Button>
       </div>
 
@@ -216,6 +239,12 @@ export default function RawMaterials() {
             ))}
           </TableBody>
         </Table>
+      )}
+      {searchTerm && (
+        <p className="text-sm text-text-muted mt-2">
+          Found {searchedData.length}{" "}
+          {searchedData.length === 1 ? "result" : "results"}
+        </p>
       )}
 
       <Modal
