@@ -135,6 +135,13 @@ export default function RawMaterials() {
         />
         <Button onClick={() => setIsModalOpen(true)}>+ Add Raw Material</Button>
       </div>
+      {/* Show result count ABOVE the table, only if there are results */}
+      {searchTerm && searchedData.length > 0 && (
+        <p className="text-sm text-text-muted mb-4">
+          Found {searchedData.length}{" "}
+          {searchedData.length === 1 ? "result" : "results"} for "{searchTerm}"
+        </p>
+      )}
 
       {isLoading ? (
         <RawMaterialsSkeleton />
@@ -239,12 +246,6 @@ export default function RawMaterials() {
             ))}
           </TableBody>
         </Table>
-      )}
-      {searchTerm && (
-        <p className="text-sm text-text-muted mt-2">
-          Found {searchedData.length}{" "}
-          {searchedData.length === 1 ? "result" : "results"}
-        </p>
       )}
 
       <Modal

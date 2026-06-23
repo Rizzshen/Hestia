@@ -1,7 +1,7 @@
 import PageWrapper from "../../components/layout/PageWrapper";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as products from "../../api/products";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ProductForm from "../../components/forms/ProductForm";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
@@ -24,6 +24,8 @@ import { usePagination } from "../../hooks/usePagination";
 import Tooltip from "../../components/ui/Tooltip";
 import Toast from "../../components/ui/Toast";
 import { useToast } from "../../hooks/useToast";
+import { useDebounce } from "../../hooks/useDebounce";
+import SearchInput from "../../components/ui/SearchInput";
 
 function ProductsSkeleton() {
   return (
@@ -57,14 +59,30 @@ export default function Products() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
+  //Search State
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { toasts, addToast, removeToast } = useToast();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["products"],
     queryFn: products.getProducts,
   });
+  const searchedData = useMemo(() => {
+    if (!data) return [];
+    if (!debouncedSearchTerm) return data;
+
+    const lowercasedTerm = debouncedSearchTerm.toLowerCase();
+    return data.filter(
+      (item) =>
+        item.name.toLowerCase().includes(lowercasedTerm) ||
+        (item.description &&
+          item.description.toLowerCase().includes(lowercasedTerm)) ||
+        (item.currency && item.currency.toLowerCase().includes(lowercasedTerm)),
+    );
+  }, [data, debouncedSearchTerm]);
   const { sortedData, sortKey, direction, toggleSort } = useSortableData(
-    data || [],
+    searchedData,
     null,
   );
   const { paginatedData, page, totalPages, goToPage } = usePagination(
@@ -110,10 +128,21 @@ export default function Products() {
 
   return (
     <PageWrapper>
-      <div className="flex justify-end mb-4">
-        <Button onClick={() => setIsModalOpen(true)}>+ Add Product</Button>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <SearchInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search Products..."
+        />
+        <Button onClick={() => setIsModalOpen(true)}>+ Add Products</Button>
       </div>
-
+      {/* Show result count ABOVE the table, only if there are results */}
+      {searchTerm && searchedData.length > 0 && (
+        <p className="text-sm text-text-muted mb-4">
+          Found {searchedData.length}{" "}
+          {searchedData.length === 1 ? "result" : "results"} for "{searchTerm}"
+        </p>
+      )}
       {isLoading ? (
         <ProductsSkeleton />
       ) : error ? (
@@ -123,6 +152,15 @@ export default function Products() {
           type="empty"
           title="No products yet"
           description="Add your first product to get started."
+        />
+      ) : searchedData.length === 0 ? (
+        // 2. Search Empty State (Database has items, but search found 0)
+        <ScreenState
+          type="empty"
+          title="No results found"
+          description={`No products match "${searchTerm}". Try a different search.`}
+          onRetry={() => setSearchTerm("")}
+          retryLabel="Clear Search"
         />
       ) : (
         <Table
