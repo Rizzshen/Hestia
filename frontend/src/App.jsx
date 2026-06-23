@@ -4,6 +4,7 @@ import RawMaterials from './pages/RawMaterials/RawMaterials'
 import Products from './pages/Products/Products'
 import Clients from './pages/Clients/Clients'
 import Orders from './pages/Orders/Orders'
+import OrderDetail from './pages/Orders/OrderDetail'
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/products" element={<Products />} />
       <Route path="/clients" element={<Clients />} />
       <Route path="/orders" element={<Orders />} />
+      <Route path="/orders/:id" element={<OrderDetail />} />
     </Routes>
   )
 }
