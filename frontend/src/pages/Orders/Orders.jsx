@@ -30,13 +30,18 @@ import { useToast } from "../../hooks/useToast";
 // Helper for status badge colors
 const getStatusColors = (status) => {
   const colors = {
-    pending: "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100",
+    pending:
+      "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100",
     processing: "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100",
-    shipped: "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100",
+    shipped:
+      "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100",
     completed: "bg-green-50 text-green-700 border-green-200 hover:bg-green-100",
     cancelled: "bg-red-50 text-red-700 border-red-200 hover:bg-red-100",
   };
-  return colors[status] || "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100";
+  return (
+    colors[status] ||
+    "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+  );
 };
 
 function OrdersSkeleton() {
@@ -49,7 +54,10 @@ function OrdersSkeleton() {
       </div>
       <div className="divide-y bg-surface divide-border">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="grid grid-cols-6 items-center px-5 py-2.5 gap-4">
+          <div
+            key={i}
+            className="grid grid-cols-6 items-center px-5 py-2.5 gap-4"
+          >
             <Skeleton className="h-3 w-10" />
             <Skeleton className="h-3 w-24" />
             <Skeleton className="h-5 w-20 rounded" />
@@ -85,18 +93,19 @@ export default function Orders() {
     return data.filter(
       (item) =>
         item.id.toString().includes(lowercasedTerm) ||
-        (item.client_name && item.client_name.toLowerCase().includes(lowercasedTerm))
+        (item.client_name &&
+          item.client_name.toLowerCase().includes(lowercasedTerm)),
     );
   }, [data, debouncedSearchTerm]);
 
   // Sort & Paginate
   const { sortedData, sortKey, direction, toggleSort } = useSortableData(
     searchedData,
-    null
+    null,
   );
   const { paginatedData, page, totalPages, goToPage } = usePagination(
     sortedData,
-    10
+    10,
   );
 
   // --- MUTATIONS ---
@@ -106,17 +115,19 @@ export default function Orders() {
     mutationFn: async (formData) => {
       // 1. Separate items from the rest of the form data
       const { items, ...orderData } = formData;
-      
+
       // 2. Create the order header
       const createdOrder = await ordersApi.createOrder(orderData);
-      
+
       // 3. Add all items to the new order (fired in parallel for speed)
       if (items && items.length > 0) {
         await Promise.all(
-          items.map((item) => orderItemsApi.addOrderItem(createdOrder.id, item))
+          items.map((item) =>
+            orderItemsApi.addOrderItem(createdOrder.id, item),
+          ),
         );
       }
-      
+
       return createdOrder;
     },
     onSuccess: () => {
@@ -126,7 +137,7 @@ export default function Orders() {
     },
     onError: () => {
       addToast("Failed to create order. Please try again.", "error");
-    }
+    },
   });
 
   const updateStatusMutation = useMutation({
@@ -171,7 +182,8 @@ export default function Orders() {
       {/* Result Count */}
       {searchTerm && searchedData.length > 0 && (
         <p className="text-sm text-text-muted mb-4">
-          Found {searchedData.length} {searchedData.length === 1 ? "result" : "results"} for "{searchTerm}"
+          Found {searchedData.length}{" "}
+          {searchedData.length === 1 ? "result" : "results"} for "{searchTerm}"
         </p>
       )}
 
@@ -248,15 +260,15 @@ export default function Orders() {
           <TableBody>
             {paginatedData.map((order) => (
               <TableRow key={order.id}>
-                <TableCell className="font-medium">
-                  #{order.id}
-                </TableCell>
-                <TableCell>{order.client_name || "Unknown Client"}</TableCell>
+                <TableCell className="font-medium">#{order.id}</TableCell>
+                <TableCell>{order.contact_name || "Unknown Client"}</TableCell>
                 <TableCell>
                   {/* Inline Status Dropdown */}
                   <select
                     value={order.status}
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusChange(order.id, e.target.value)
+                    }
                     disabled={updateStatusMutation.isPending}
                     className={`px-2.5 py-1 text-xs font-medium rounded-full border cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors ${getStatusColors(order.status)}`}
                   >
@@ -268,10 +280,14 @@ export default function Orders() {
                   </select>
                 </TableCell>
                 <TableCell align="right">
-                  {order.total_amount ? `$${parseFloat(order.total_amount).toFixed(2)}` : "—"}
+                  {order.total_amount
+                    ? `$${parseFloat(order.total_amount).toFixed(2)}`
+                    : "—"}
                 </TableCell>
                 <TableCell align="right" className="text-text-muted text-sm">
-                  {order.created_at ? new Date(order.created_at).toLocaleDateString() : "—"}
+                  {order.created_at
+                    ? new Date(order.created_at).toLocaleDateString()
+                    : "—"}
                 </TableCell>
                 <TableCell align="right">
                   <div className="flex gap-2 justify-end">
