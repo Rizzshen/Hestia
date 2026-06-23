@@ -10,7 +10,7 @@ export const addOrderItem = async (orderId, data) => {
   return res.data;
 };
 
-export const deleteOrderItem = async (orderId) => {
-  const res = await api.delete(`/api/orders/${orderId}/items`);
+export const deleteOrderItem = async (orderId, itemId) => {
+  const res = await api.delete(`/api/orders/${orderId}/items/${itemId}`);
   return res.data;
 };
