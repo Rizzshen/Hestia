@@ -91,7 +91,8 @@ export default function Dashboard() {
                 key={order.id}
                 className="flex justify-between items-center text-sm"
               >
-                <span className="text-text">{order.company_name}</span>
+                {console.log(order)}
+                <span className="text-text">{order.company_name || order.contact_name || "Unknown Client"}</span>
                 <Badge variant={ORDER_STATUS_VARIANTS[order.status]}>
                   {order.status}
                 </Badge>

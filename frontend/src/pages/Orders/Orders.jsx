@@ -1,7 +1,7 @@
 import PageWrapper from "../../components/layout/PageWrapper";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as ordersApi from "../../api/orders";
-import * as orderItemsApi from "../../api/orderItems"; // Import the second file
+import * as orderItemsApi from "../../api/orderItems";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import OrderForm from "../../components/forms/OrderForm";
@@ -27,22 +27,7 @@ import { usePagination } from "../../hooks/usePagination";
 import Toast from "../../components/ui/Toast";
 import { useToast } from "../../hooks/useToast";
 
-// Helper for status badge colors
-const getStatusColors = (status) => {
-  const colors = {
-    pending:
-      "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100",
-    processing: "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100",
-    shipped:
-      "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100",
-    completed: "bg-green-50 text-green-700 border-green-200 hover:bg-green-100",
-    cancelled: "bg-red-50 text-red-700 border-red-200 hover:bg-red-100",
-  };
-  return (
-    colors[status] ||
-    "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
-  );
-};
+import { ORDER_STATUSES, ORDER_STATUS_COLORS } from "../../constants";
 
 function OrdersSkeleton() {
   return (
@@ -76,6 +61,7 @@ export default function Orders() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
+  const [orderToConfirm, setOrderToConfirm] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { toasts, addToast, removeToast } = useToast();
@@ -93,8 +79,8 @@ export default function Orders() {
     return data.filter(
       (item) =>
         item.id.toString().includes(lowercasedTerm) ||
-        (item.client_name &&
-          item.client_name.toLowerCase().includes(lowercasedTerm)),
+        (item.contact_name &&
+          item.contact_name.toLowerCase().includes(lowercasedTerm)),
     );
   }, [data, debouncedSearchTerm]);
 
@@ -110,16 +96,10 @@ export default function Orders() {
 
   // --- MUTATIONS ---
 
-  // The "Magic" Create Mutation: Handles the two API calls seamlessly
   const createMutation = useMutation({
     mutationFn: async (formData) => {
-      // 1. Separate items from the rest of the form data
       const { items, ...orderData } = formData;
-
-      // 2. Create the order header
       const createdOrder = await ordersApi.createOrder(orderData);
-
-      // 3. Add all items to the new order (fired in parallel for speed)
       if (items && items.length > 0) {
         await Promise.all(
           items.map((item) =>
@@ -127,7 +107,6 @@ export default function Orders() {
           ),
         );
       }
-
       return createdOrder;
     },
     onSuccess: () => {
@@ -146,6 +125,12 @@ export default function Orders() {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       addToast("Order status updated.", "updated");
     },
+    onError: () => {
+      addToast(
+        "Failed to update status. Only pending orders can be confirmed.",
+        "error",
+      );
+    },
   });
 
   const deleteMutation = useMutation({
@@ -153,18 +138,28 @@ export default function Orders() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       addToast(`Order #${orderToDelete?.id} deleted.`, "deleted");
+      setOrderToDelete(null);
+    },
+    onError: () => {
+      addToast("Only pending orders can be deleted.", "error");
+      setOrderToDelete(null);
     },
   });
 
-  const handleDelete = (order) => setOrderToDelete(order);
-  const confirmDelete = () => {
-    deleteMutation.mutate(orderToDelete.id, {
-      onSuccess: () => setOrderToDelete(null),
-    });
-  };
+  // --- HANDLERS ---
 
   const handleStatusChange = (orderId, newStatus) => {
+    if (newStatus === "confirmed") {
+      setOrderToConfirm({ id: orderId, status: newStatus });
+      return;
+    }
     updateStatusMutation.mutate({ id: orderId, status: newStatus });
+  };
+
+  const handleDelete = (order) => setOrderToDelete(order);
+
+  const confirmDelete = () => {
+    deleteMutation.mutate(orderToDelete.id);
   };
 
   return (
@@ -199,11 +194,10 @@ export default function Orders() {
         />
       ) : searchedData.length === 0 ? (
         <ScreenState
-          type="empty"
+          type="no-results"
           title="No results found"
           description={`No orders match "${searchTerm}".`}
-          onRetry={() => setSearchTerm("")}
-          retryLabel="Clear Search"
+          action={{ label: "Clear search", onClick: () => setSearchTerm("") }}
         />
       ) : (
         <Table
@@ -228,7 +222,7 @@ export default function Orders() {
                 Order #
               </TableHead>
               <TableHead
-                sortKey="client_name"
+                sortKey="contact_name"
                 currentSort={sortKey}
                 direction={direction}
                 onSort={toggleSort}
@@ -236,15 +230,6 @@ export default function Orders() {
                 Client
               </TableHead>
               <TableHead>Status</TableHead>
-              <TableHead
-                sortKey="total_amount"
-                currentSort={sortKey}
-                direction={direction}
-                onSort={toggleSort}
-                align="right"
-              >
-                Total
-              </TableHead>
               <TableHead
                 sortKey="created_at"
                 currentSort={sortKey}
@@ -263,26 +248,24 @@ export default function Orders() {
                 <TableCell className="font-medium">#{order.id}</TableCell>
                 <TableCell>{order.contact_name || "Unknown Client"}</TableCell>
                 <TableCell>
-                  {/* Inline Status Dropdown */}
                   <select
                     value={order.status}
                     onChange={(e) =>
                       handleStatusChange(order.id, e.target.value)
                     }
                     disabled={updateStatusMutation.isPending}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-full border cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors ${getStatusColors(order.status)}`}
+                    className={`text-xs font-medium rounded-full border px-2.5 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors ${ORDER_STATUS_COLORS[order.status]}`}
                   >
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    {ORDER_STATUSES.filter((s) => s !== "shipped").map(
+                      (status) => (
+                        <option key={status} value={status}>
+                          {status
+                            .replace("_", " ")
+                            .replace(/\b\w/g, (l) => l.toUpperCase())}
+                        </option>
+                      ),
+                    )}
                   </select>
-                </TableCell>
-                <TableCell align="right">
-                  {order.total_amount
-                    ? `$${parseFloat(order.total_amount).toFixed(2)}`
-                    : "—"}
                 </TableCell>
                 <TableCell align="right" className="text-text-muted text-sm">
                   {order.created_at
@@ -298,10 +281,20 @@ export default function Orders() {
                     >
                       <Eye size={15} />
                     </button>
+
                     <button
                       onClick={() => handleDelete(order)}
-                      className="p-1 text-text-muted hover:text-danger transition-colors"
-                      title="Delete"
+                      disabled={order.status !== "pending"}
+                      className={`p-1 transition-colors ${
+                        order.status !== "pending"
+                          ? "text-text-muted/30 cursor-not-allowed"
+                          : "text-text-muted hover:text-danger"
+                      }`}
+                      title={
+                        order.status !== "pending"
+                          ? "Only pending orders can be deleted"
+                          : "Delete"
+                      }
                     >
                       <Trash2 size={15} />
                     </button>
@@ -334,8 +327,22 @@ export default function Orders() {
         onClose={() => setOrderToDelete(null)}
         onConfirm={confirmDelete}
         title="Delete Order"
-        description={`Are you sure you want to delete Order #${orderToDelete?.id}? This cannot be undone.`}
+        description={`Are you sure you want to delete Order #${orderToDelete?.id}? This cannot be undone. Note: only pending orders can be deleted.`}
         isLoading={deleteMutation.isPending}
+      />
+
+      {/* Confirm Order Dialog */}
+      <ConfirmDialog
+        isOpen={!!orderToConfirm}
+        onClose={() => setOrderToConfirm(null)}
+        onConfirm={() => {
+          updateStatusMutation.mutate(orderToConfirm);
+          setOrderToConfirm(null);
+        }}
+        title="Confirm Order"
+        description="Confirming this order will permanently deduct raw materials from stock. This cannot be undone."
+        confirmLabel="Confirm Order"
+        isLoading={updateStatusMutation.isPending}
       />
 
       <Toast toasts={toasts} onRemove={removeToast} />

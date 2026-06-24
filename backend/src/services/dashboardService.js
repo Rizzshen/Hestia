@@ -8,7 +8,7 @@ export const getDashboardMetrics = async () => {
       ),
       pool.query("SELECT COUNT(*) as count from clients"),
       pool.query(
-        `SELECT orders.id, orders.status, orders.created_at, orders.notes, clients.company_name
+        `SELECT orders.id, orders.status, orders.created_at, orders.notes, clients.company_name, clients.contact_name
         FROM orders 
         INNER JOIN clients ON orders.client_id = clients.id 
         ORDER BY orders.created_at DESC 
