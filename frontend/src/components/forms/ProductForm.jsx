@@ -6,7 +6,7 @@ import { Trash2, Plus } from "lucide-react";
 import Button from "../ui/Button";
 import { CURRENCIES } from "../../constants";
 import { productSchema } from "../../schemas/product";
-import * as rawMaterialsApi from "../../api/rawMaterials";
+import * as rawMaterialsApi from "../../api/rawmaterials";
 
 export default function ProductForm({
   defaultValues,
