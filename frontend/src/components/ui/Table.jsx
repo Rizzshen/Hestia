@@ -5,16 +5,23 @@ export function Table({ children, footer, className }) {
   return (
     <div
       className={cn(
-        "w-full overflow-hidden rounded-lg border border-border bg-surface shadow-sm",
+        "w-full rounded-lg border border-border bg-surface shadow-sm overflow-hidden",
         className,
-        
       )}
     >
-      <table className="w-full border-collapse">{children}</table>
+      <div className="overflow-x-auto">
+        
+        <table className="w-full border-collapse min-w-[600px]">
+          {children}
+        </table>
+      </div>
+      
       {footer}
     </div>
   );
 }
+
+// ... (Keep TableHead, TableHeader, TableBody, TableRow, TableCell, TableUnitBadge, TableStatusBadge exactly as they are) ...
 export function TableHead({
   children,
   align = "left",

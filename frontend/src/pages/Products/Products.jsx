@@ -107,6 +107,7 @@ export default function Products() {
       addToast(`"${variables.data.name}" updated.`, "updated");
     },
   });
+  
 
   const deleteMutation = useMutation({
     mutationFn: products.deleteProduct,
@@ -115,6 +116,18 @@ export default function Products() {
       addToast(`"${productToDelete?.name}" deleted.`, "deleted");
     },
   });
+  const handleEdit = async (product) => {
+    try {
+      // Fetch the ingredients for this product
+      const ingredients = await products.getProductIngredients(product.id);
+      // Merge them into the product object so the form receives them
+      setEditingProduct({ ...product, ingredients });
+    } catch (error) {
+      console.error("Failed to load ingredients", error);
+      setEditingProduct(product); // Fallback if it fails
+    }
+  };
+
 
   const handleDelete = (product) => {
     setProductToDelete(product);
@@ -239,7 +252,7 @@ export default function Products() {
                 <TableCell align="right">
                   <div className="flex gap-2 justify-end">
                     <button
-                      onClick={() => setEditingProduct(product)}
+                      onClick={() => handleEdit(product)}
                       className="p-1 text-text-muted hover:text-primary transition-colors"
                       title="Edit"
                     >
