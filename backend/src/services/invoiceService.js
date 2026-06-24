@@ -211,14 +211,14 @@ export const generateInvoices = async (orderId) => {
   page.drawText("TOTAL:", {
     x: 410,
     y: totalY + 12,
-    size: 14,
+    size: 12,
     font: fontBold,
     color: primaryColor,
   });
   page.drawText(`${order.currency} ${total.toFixed(2)}`, {
-    x: 510,
+    x: 490,
     y: totalY + 12,
-    size: 16,
+    size: 14,
     font: fontBold,
     color: primaryColor,
   });
