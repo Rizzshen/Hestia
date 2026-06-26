@@ -1,19 +1,39 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { User, Menu, LogOut } from "lucide-react";
-import { ROUTE_TITLES } from "../../constants/routes.js";
+import { 
+  User, 
+  Menu, 
+  LogOut,
+  LayoutDashboard,
+  Box,
+  Package,
+  Users,
+  ShoppingCart,
+} from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
+
+// Map routes to their icons and titles
+const routeConfig = {
+  "/dashboard": { title: "Dashboard", icon: LayoutDashboard },
+  "/raw-materials": { title: "Raw Materials", icon: Box },
+  "/products": { title: "Products", icon: Package },
+  "/clients": { title: "Clients", icon: Users },
+  "/orders": { title: "Orders", icon: ShoppingCart },
+};
 
 export default function Topbar({ onToggleSidebar }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-  const title = ROUTE_TITLES[location.pathname] || "Hestia";
-
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside of it
+  // Get route config or fallback
+  const routeInfo = routeConfig[location.pathname] || { title: "Hestia", icon: LayoutDashboard };
+  const IconComponent = routeInfo.icon;
+
+  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -34,7 +54,7 @@ export default function Topbar({ onToggleSidebar }) {
 
   return (
     <header className="h-16 bg-surface border-b border-border flex items-center justify-between px-6">
-      {/* Left Side: Mobile Toggle & Page Title */}
+      {/* Left Side: Mobile Toggle & Page Title with Icon */}
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
@@ -44,7 +64,11 @@ export default function Topbar({ onToggleSidebar }) {
           <Menu size={20} />
         </button>
         
-        <h1 className="text-lg font-semibold text-text">{title}</h1>
+        {/* Title with Icon */}
+        <div className="flex items-center gap-3">
+          <IconComponent size={20} className="text-primary" />
+          <h1 className="text-2xl font-semibold text-text">{routeInfo.title}</h1>
+        </div>
       </div>
       
       {/* Right Side: User Profile Dropdown */}
@@ -71,23 +95,14 @@ export default function Topbar({ onToggleSidebar }) {
               </p>
             </div>
 
-            {/* Menu Actions */}
-            <div className="py-1">
-              {/* Future: Edit Profile Button */}
-              {/* <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-text hover:bg-surface-secondary transition-colors">
-                <Settings size={16} />
-                Edit Profile
-              </button> */}
-
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-danger hover:bg-danger-bg transition-colors"
-              >
-                <LogOut size={16} />
-                Sign out
-              </button>
-            </div>
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-2 text-sm text-danger hover:bg-danger-bg transition-colors"
+            >
+              <LogOut size={16} />
+              Sign out
+            </button>
           </div>
         )}
       </div>
