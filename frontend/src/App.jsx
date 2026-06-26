@@ -67,7 +67,7 @@ export default function App() {
       />
 
       {/* Default Redirect */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
       {/* Protected Routes */}
       <Route
