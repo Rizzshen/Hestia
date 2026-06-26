@@ -1,4 +1,4 @@
-import hestiaLogo from '../../assets/hestia.png';
+import hestiaLogo from '../../assets/hestia.svg';
 
 const AuthLayout = ({ children, title, subtitle }) => {
   return (

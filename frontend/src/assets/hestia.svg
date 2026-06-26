@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none">
+  <!-- Left Hexagon -->
+  <path d="M12 10 L22 10 L27 18 L22 26 L12 26 L7 18 Z" stroke="#185fa5" stroke-width="2.5" fill="none"/>
+  
+  <!-- Right Hexagon (Overlapping) -->
+  <path d="M18 14 L28 14 L33 22 L28 30 L18 30 L13 22 Z" stroke="#0c447c" stroke-width="2.5" fill="none" opacity="0.7"/>
+  
+  <!-- Center Dot -->
+  <circle cx="20" cy="20" r="2" fill="#185fa5"/>
+  
+  <!-- HESTIA Text -->
+  <text x="42" y="26" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="18" fill="#ffffff" letter-spacing="2">HESTIA</text>
+</svg>
