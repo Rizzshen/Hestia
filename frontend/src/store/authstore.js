@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { loginApi, logoutApi, getMeApi, registerApi } from "../api/auth";
 
+
 export const useAuthStore = create((set) => ({
   user: null,
   loading: true,
@@ -32,3 +33,4 @@ export const useAuthStore = create((set) => ({
     set({ user: null });
   },
 }));
+// export default useAuthStore;
