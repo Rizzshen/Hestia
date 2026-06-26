@@ -27,6 +27,13 @@ import dashboardRouter from "./routes/dashboard.js";
 //invoice Router
 import invoiceRouter from "./routes/invoice.js";
 
+//auth routes
+import authRouter from "./routes/auth.js";
+
+import cookieParser from "cookie-parser";
+
+import { protect } from './middlewares/auth.js';
+
 dotenv.config();
 
 const app = express();
@@ -34,6 +41,7 @@ const app = express();
 const allowedOrigins = [
   "https://hestia-eosin.vercel.app",
   "http://localhost:5173",
+  "http://localhost:5000",
   "https://hestia-8rtcaiel7-rizzshens-projects.vercel.app",
   process.env.CLIENT_URL,
 ].filter(Boolean); // removes undefined if CLIENT_URL isn't set
@@ -54,32 +62,34 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use(cookieParser());
 // API routes
+app.use("/api/auth", authRouter);
 //raw materials routes
 
-app.use("/api/raw-materials", rawMaterialsRouter);
+app.use("/api/raw-materials", protect, rawMaterialsRouter);
 
 //products routes
-app.use("/api/products", productsRouter);
+app.use("/api/products",protect,  productsRouter);
 
 //ingredients routes
 
-app.use("/api/products", ingredientsRouter);
+app.use("/api/products", protect, ingredientsRouter);
 
 //clients routes
-app.use("/api/clients", clientsRouter);
+app.use("/api/clients", protect, clientsRouter);
 
 //orders routes
-app.use("/api/orders", ordersRouter);
+app.use("/api/orders", protect, ordersRouter);
 
 //order items routes
-app.use("/api/orders", orderItemsRouter);
+app.use("/api/orders", protect, orderItemsRouter);
 
 // Dashboard route
-app.use("/api/dashboard", dashboardRouter);
+app.use("/api/dashboard", protect, dashboardRouter);
 
 //invoice routes
-app.use("/api/invoice", invoiceRouter);
+app.use("/api/invoice", protect, invoiceRouter);
 // Swagger documentation route
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
