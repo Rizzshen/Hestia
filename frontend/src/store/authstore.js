@@ -1,29 +1,32 @@
-import { create } from 'zustand';
-import { loginApi, logoutApi, getMeApi } from '../api/auth';
+import { create } from "zustand";
+import { loginApi, logoutApi, getMeApi, registerApi } from "../api/auth";
 
 export const useAuthStore = create((set) => ({
   user: null,
-  loading: true, // Start as true to block UI until we verify the session
+  loading: true,
 
-  // Fetches the user on initial app load or page refresh
   fetchUser: async () => {
     try {
       const user = await getMeApi();
       set({ user, loading: false });
     } catch (error) {
-      // If it fails (401), the user is not logged in or token expired
       set({ user: null, loading: false });
+      console.log(error);
     }
   },
 
-  // Handles login
   login: async (email, password) => {
     const user = await loginApi(email, password);
     set({ user });
     return user;
   },
 
-  // Handles logout
+  register: async (name, email, password, role) => {
+    const user = await registerApi(name, email, password, role);
+    set({ user });
+    return user;
+  },
+
   logout: async () => {
     await logoutApi();
     set({ user: null });
